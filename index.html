@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>A Blue Orchid Garden</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <meta property="og:title" content="Blue Orchid Garden">
+    <meta property="og:description" content="Where Beautiful Things Grow Organically.">
+    <meta property="og:image" content="https://blueorchid.garden/img/garden-preview.jpg">
+    <meta property="og:url" content="https://blueorchid.garden">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <!-- For IE 11, Chrome, Firefox, Safari, Opera -->
+    <link rel="icon" type="image/png" sizes="16x16" href="img\icons\favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="img\icons\favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="img\icons\48-icon-blue_orchid.png">
+    <link rel="icon" type="image/png" sizes="256x256" href="img\icons\256-icon-blue_orchid.png">
+    <!-- Additional sizes -->
+    <!-- iOS and Android sizes here -->
+    <link rel="icon" sizes="192x192" href="img\icons\android-chrome-192x192.png">
+    <link rel="icon" sizes="512x512" href="img\icons\android-chrome-512x512.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="img\icons\apple-touch-icon.png">
+
+    <!-- For IE 10 and below -->
+    <!-- Special case. Ico file that contains multiple sizes in one file -->
+    <link rel="shortcut icon" type="image/x-icon" href="path/to/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+    <div class="container">
+        <div class="line">
+            <span id="typed-text"></span><span id="cursor1">_</span>
+        </div>
+        <div class="line">
+            <span id="random-text"></span><span id="cursor2">_</span>
+        </div>
+    </div>
+    <img id="menu-icon" src="img/orchid-menu.png" onclick="toggleMenu()" alt="Menu">
+
+
+    <div id="flyout-menu">
+        <ul>
+            <li><a href="https://photos.app.goo.gl/DHCBVFE7PEVFQJfA9">Photos.</a></li>
+            <li><a href="https://play.google.com/store/apps/dev?id=5798175541640095222" target="_blank">B1G+ App.</a>
+            </li>
+            <li><a href="https://moore.id">Contact me.</a></li>
+            <!-- Add as many list items as you want -->
+        </ul>
+    </div>
+    <svg id="fireflyContainer" style="position: absolute; top: 0; left: 0; z-index: 0;">
+        <circle cx="-15" cy="-15" r="2" fill="yellow" />
+        <filter id="glow">
+            <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
+            <feMerge>
+                <feMergeNode in="coloredBlur" />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+        </filter>
+    </svg>
+    <script src="js/scripts.js"></script>
+    <script src="js/fireflies.js"></script>
+</body>
+
+</html>
