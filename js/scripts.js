@@ -13,59 +13,63 @@ document.addEventListener("DOMContentLoaded", function () {
     const randomTextElement = document.getElementById('random-text');
     const cursor1Element = document.getElementById('cursor1');
     const cursor2Element = document.getElementById('cursor2');
+    const pauseButton = document.getElementById('pauseButton');
+    const emailLink = document.getElementById('emailLink');
+    const smsLink = document.getElementById('smsLink');
 
     const textToType = "For Kirkja.";
     let index = 0;
+    let isPaused = false;
+    let typingTimer;
 
     function typeText() {
-        if (index < textToType.length) {
+        if (!isPaused && index < textToType.length) {
             textElement.textContent += textToType[index];
             index++;
-            setTimeout(typeText, 50 + Math.random() * 100); // Random delay between 50ms to 150ms
-        } else {
+            typingTimer = setTimeout(typeText, 50 + Math.random() * 100);
+        } else if (!isPaused) {
             setTimeout(() => {
-                cursor1Element.style.display = 'none';  // Hide the cursor for the first line
+                cursor1Element.style.display = 'none';
                 typeRandomText();
-            }, 3000 + Math.random() * 2000); // Random pause between 3 to 5 seconds
+            }, 3000 + Math.random() * 2000);
         }
     }
 
     function typeRandomText() {
-        cursor2Element.style.display = 'inline'; // Make the second cursor visible
+        if (!isPaused) {
+            cursor2Element.style.display = 'inline';
+            const sentence = randomSentences[Math.floor(Math.random() * randomSentences.length)];
+            let i = 0;
+            cursor2Element.style.opacity = "0";
 
-        const sentence = randomSentences[Math.floor(Math.random() * randomSentences.length)];
-        let i = 0;
+            function type() {
+                if (i === 0) {
+                    blinkCursor(cursor2Element);
+                }
 
-        cursor2Element.style.opacity = "0"; // Initially make it transparent
-
-        function type() {
-            if (i === 0) {
-                // Start blinking cursor once the text starts appearing
-                blinkCursor(cursor2Element);
+                if (!isPaused && i < sentence.length) {
+                    randomTextElement.textContent += sentence[i];
+                    i++;
+                    typingTimer = setTimeout(type, 50 + Math.random() * 100);
+                } else if (!isPaused) {
+                    setTimeout(() => {
+                        backspace();
+                    }, 3000 + Math.random() * 2000);
+                }
             }
 
-            if (i < sentence.length) {
-                randomTextElement.textContent += sentence[i];
-                i++;
-                setTimeout(type, 50 + Math.random() * 100); // Random delay between 50ms to 150ms
-            } else {
-                setTimeout(() => {
-                    backspace();
-                }, 3000 + Math.random() * 2000); // Random pause between 3 to 5 seconds
+            function backspace() {
+                if (!isPaused && randomTextElement.textContent.length > 0) {
+                    randomTextElement.textContent = randomTextElement.textContent.slice(0, -1);
+                    typingTimer = setTimeout(backspace, 50 + Math.random() * 100);
+                } else if (!isPaused) {
+                    cursor2Element.style.opacity = "0";
+                    typeRandomText();
+                }
             }
+
+            type();
         }
-
-        function backspace() {
-            if (randomTextElement.textContent.length > 0) {
-                randomTextElement.textContent = randomTextElement.textContent.slice(0, -1);
-                setTimeout(backspace, 50 + Math.random() * 100); // Random delay between 50ms to 150ms
-            } else {
-                cursor2Element.style.opacity = "0"; // Hide the cursor before typing the next sentence
-                typeRandomText();
-            }
-        }
-
-        type();
     }
 
     function blinkCursor(cursorElement) {
@@ -76,92 +80,25 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         setTimeout(() => blinkCursor(cursorElement), 500);
     }
-    cursor2Element.style.opacity = "0";
-    cursor2Element.style.display = 'none';
 
-    const svgContainer = document.getElementById('fireflyContainer');
-    svgContainer.setAttribute("width", window.innerWidth);
-    svgContainer.setAttribute("height", window.innerHeight);
+    pauseButton.addEventListener('click', function() {
+        isPaused = !isPaused;
+        if (isPaused) {
+            clearTimeout(typingTimer);
+            const currentQuestion = randomTextElement.textContent.trim();
+            const emailSubject = encodeURIComponent('Blue Orchid');
+            const emailBody = encodeURIComponent(`${currentQuestion} Answer: `);
+            const smsBody = encodeURIComponent(`${currentQuestion} Answer: `);
 
-    const numberOfFireflies = Math.floor(Math.random() * 14) + 4;
+            emailLink.href = `mailto:rob@moore.id?subject=${emailSubject}&body=${emailBody}`;
+            smsLink.href = `sms:+17154093604?body=${smsBody}`;
 
-    function fadeOutIn(element, initial, step) {
-        let opacity = initial;
-        let fadingOut = true;
-
-        function fade() {
-            if (fadingOut) {
-                opacity -= step;
-                if (opacity <= 0) {
-                    fadingOut = false;
-                    setTimeout(() => {
-                        fade();
-                    }, (Math.random() * 4000) + 3000); // 3 to 7 seconds
-                    return;
-                }
-            } else {
-                opacity += step;
-                if (opacity >= initial) {
-                    fadingOut = true;
-                }
-            }
-
-            element.setAttribute("fill", `rgba(255, 255, 0, ${opacity.toFixed(2)})`);
-            requestAnimationFrame(fade);
+            emailLink.style.display = 'inline';
+            smsLink.style.display = 'inline';
+        } else {
+            emailLink.style.display = 'none';
+            smsLink.style.display = 'none';
+            typeRandomText();
         }
-
-        fade();
-    }
-
-
-    // Create fireflies
-    for (let i = 0; i < numberOfFireflies; i++) {
-        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-
-        const randomX = Math.random() * window.innerWidth;
-        const randomY = Math.random() * window.innerHeight;
-        const randomSize = Math.random() * 1.5 + 1; // Sizes between 1 and 2.5
-        const randomBrightness = (randomSize - 1) / 1.5; // Brightness relative to size
-
-        circle.setAttribute("cx", randomX);
-        circle.setAttribute("cy", randomY);
-        circle.setAttribute("r", randomSize);
-        circle.setAttribute("fill", `rgba(255, 255, 0, ${randomBrightness.toFixed(2)})`);
-
-        svgContainer.appendChild(circle);
-
-        // Randomly decide whether to fade out this firefly or not
-        if (Math.random() > 0.5) {
-            fadeOutIn(circle, randomBrightness, 0.01);
-        }
-    }
-
-    // Animate fireflies
-    const animateFireflies = () => {
-        for (const firefly of svgContainer.children) {
-            const newX = parseFloat(firefly.getAttribute("cx")) + (Math.random() - 0.5) * 10;
-            const newY = parseFloat(firefly.getAttribute("cy")) + (Math.random() - 0.5) * 10;
-            firefly.setAttribute("cx", newX);
-            firefly.setAttribute("cy", newY);
-        }
-        requestAnimationFrame(animateFireflies);
-    };
-
-    // Start the animation
-    requestAnimationFrame(animateFireflies);
-
-
-
+    });
 });
-
-let menuVisible = false;
-
-function toggleMenu() {
-    const menu = document.getElementById('flyout-menu');
-
-    if (menu.style.right === "-300px" || menu.style.right === "") {
-        menu.style.right = "0px";
-    } else {
-        menu.style.right = "-300px";
-    }
-}
